@@ -1,0 +1,77 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  background: #000;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.game {
+  display: flex;
+}
+
+.scoreboards {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
+}
+.scoreboard {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 20px;
+  background-color: rgb(194, 167, 49);
+  width: 200px;
+  border-radius: 10px;
+  font-size: 24px;
+  padding: 10px;
+}
+
+button {
+  margin: 10px;
+  font-size: 24px;
+  padding: 10px;
+  cursor: pointer;
+  background-color: rgb(97, 67, 1);
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 10px;
+}
+
+.game-items {
+  margin: 20px auto;
+
+  .buttons {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .throwed-dices {
+    display: flex;
+    margin-top: 20px;
+
+    .dice {
+      width: 50px;
+      height: 50px;
+      text-align: center;
+      padding: 10px;
+      font-size: 24px;
+      margin-left: 10px;
+      background-color: rgb(97, 67, 1);
+      margin-top: 10px;
+
+      &.choosable {
+        cursor: pointer;
+      }
+
+      &.chosen {
+        background-color: rgb(114, 20, 4) !important;
+      }
+    }
+  }
+}
