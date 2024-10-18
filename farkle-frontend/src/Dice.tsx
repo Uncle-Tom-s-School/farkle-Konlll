@@ -21,7 +21,7 @@ const Dice = (currentValues: DiceProps) => {
   const removeFromDices = (currentIndex: number) => {
     setChosenDices([
       ...chosenDices,
-      throwedDices.filter((dice, i) => i == currentIndex),
+      ...throwedDices.filter((dice, i) => i == currentIndex),
     ]);
     setThrowedDices(throwedDices.filter((dice, i) => i !== currentIndex));
   };

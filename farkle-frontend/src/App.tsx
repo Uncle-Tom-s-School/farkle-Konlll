@@ -26,11 +26,12 @@ const App = () => {
   const [currentPlayer, setCurrentPlayer] = useState<string>("me");
   const [throwedDices, setThrowedDices] = useState<number[]>([]);
   const [chosenDices, setChosenDices] = useState<number[]>([]);
+  const [fixedDices, setFixedDices] = useState<number[]>([]);
   const [currentMaxDicesLength, setCurrentMaxDicesLength] = useState<number>(6);
 
   useEffect(() => {
-    calculateScore(throwedDices, "round");
-    calculateScore(chosenDices, "selected");
+    calculateScore(throwedDices, "round", false);
+    calculateScore(chosenDices, "selected", false);
   }, [throwedDices, chosenDices]);
 
   useEffect(() => {
@@ -39,7 +40,11 @@ const App = () => {
     }
   }, [chosenDices]);
 
-  const calculateScore = (array: number[], property: string) => {
+  const calculateScore = (
+    array: number[],
+    property: string,
+    isCurrentScore: boolean
+  ) => {
     let currentScore = 0;
     const numberOfItems: {
       "1": number;
@@ -57,6 +62,7 @@ const App = () => {
       "6": array.filter((d) => d === 6).length,
     };
 
+    // TODO: pontszámítást átgondolni -> 2^(n-3) * k * 100
     if (numberOfItems["1"] === 1) {
       currentScore += 100;
     } else if (numberOfItems["1"] >= 3) {
@@ -70,7 +76,7 @@ const App = () => {
       currentScore += 30 + numberOfItems["3"] * 30;
     }
     if (numberOfItems["4"] >= 3) {
-      currentScore += 40 + numberOfItems["4"] * 40;
+      currentScore += 4 * (100 * numberOfItems["4"]);
     }
 
     if (numberOfItems["5"] === 1) {
@@ -89,10 +95,18 @@ const App = () => {
           roundScore: currentScore,
         }));
       } else {
-        setMyScoreBoard((prevState) => ({
-          ...prevState,
-          selectedScore: currentScore,
-        }));
+        if (!isCurrentScore) {
+          setMyScoreBoard((prevState) => ({
+            ...prevState,
+            selectedScore: currentScore,
+          }));
+        } else {
+          setMyScoreBoard((prevState) => ({
+            ...prevState,
+            selectedScore: 0,
+            currentScore: currentScore,
+          }));
+        }
       }
     } else {
       if (property === "round") {
@@ -101,15 +115,26 @@ const App = () => {
           roundScore: currentScore,
         }));
       } else {
-        setEnemyScoreBoard((prevState) => ({
-          ...prevState,
-          selectedScore: currentScore,
-        }));
+        if (!isCurrentScore) {
+          setEnemyScoreBoard((prevState) => ({
+            ...prevState,
+            selectedScore: currentScore,
+          }));
+        } else {
+          setEnemyScoreBoard((prevState) => ({
+            ...prevState,
+            selectedScore: 0,
+            currentScore: currentScore,
+          }));
+        }
       }
     }
   };
 
   const throwDices = () => {
+    setFixedDices([...chosenDices]);
+    calculateScore(fixedDices, "selected", true);
+    setChosenDices([]);
     const numbers: number[] = [];
     for (let i = 0; i < currentMaxDicesLength; i++) {
       numbers.push(Math.floor(Math.random() * 6) + 1);
@@ -126,10 +151,16 @@ const App = () => {
       <div className="game-items">
         <div className="buttons">
           {!throwedDices.length && (
-            <button onClick={throwDices}>
-              {currentMaxDicesLength === 6 ? "Start game" : "Throw another"}
-            </button>
+            <button onClick={throwDices}>Start game</button>
           )}
+          {chosenDices.length ? (
+            <button onClick={throwDices}>
+              Collect score and throw another
+            </button>
+          ) : (
+            ""
+          )}
+
           {throwedDices.length === 6 && <h2>Remove some dice first</h2>}
         </div>
         <div className="throwed-dices">
@@ -147,11 +178,11 @@ const App = () => {
               return <Dice key={index} {...currentValues} />;
             })}
         </div>
-        {!!chosenDices.length && (
+        {!!chosenDices.length || !!fixedDices.length ? (
           <>
             <h2>Chosen dices:</h2>
             <div className="throwed-dices">
-              {chosenDices.map((value, index) => {
+              {[...chosenDices, ...fixedDices].map((value, index) => {
                 let currentValues = {
                   index,
                   value,
@@ -165,6 +196,8 @@ const App = () => {
               })}
             </div>
           </>
+        ) : (
+          ""
         )}
       </div>
     </div>
