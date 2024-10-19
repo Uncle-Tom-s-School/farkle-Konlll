@@ -6,6 +6,7 @@ type DiceProps = {
   currentMaxDicesLength: number;
   chosenDices: number[];
   setChosenDices: React.Dispatch<React.SetStateAction<number[]>>;
+  currentPlayer: string
 };
 
 const Dice = (currentValues: DiceProps) => {
@@ -17,13 +18,16 @@ const Dice = (currentValues: DiceProps) => {
     currentMaxDicesLength,
     chosenDices,
     setChosenDices,
+      currentPlayer,
   } = currentValues;
   const removeFromDices = (currentIndex: number) => {
-    setChosenDices([
-      ...chosenDices,
-      ...throwedDices.filter((dice, i) => i == currentIndex),
-    ]);
-    setThrowedDices(throwedDices.filter((dice, i) => i !== currentIndex));
+    if(currentPlayer === "me"){
+      setChosenDices([
+        ...chosenDices,
+        ...throwedDices.filter((dice, i) => i == currentIndex),
+      ]);
+      setThrowedDices(throwedDices.filter((dice, i) => i !== currentIndex));
+    }
   };
 
   return (

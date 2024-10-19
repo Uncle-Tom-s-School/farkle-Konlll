@@ -4,7 +4,7 @@ type DiceProps = {
 };
 
 const ChosenDice = (currentValues: DiceProps) => {
-  const { index, value } = currentValues;
+  const { value } = currentValues;
   return <div className="dice chosen">{value}</div>;
 };
 
